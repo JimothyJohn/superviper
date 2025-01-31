@@ -4,7 +4,7 @@ FROM debian:${VARIANT}
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
-
+ENV ESPFLASH_PORT=/dev/ttyACM0
 # Arguments
 ARG CONTAINER_USER=esp
 ARG CONTAINER_GROUP=esp
@@ -19,6 +19,10 @@ RUN apt-get update \
 
 # Set users
 RUN adduser --disabled-password --gecos "" ${CONTAINER_USER}
+
+# Add user to dialout group for serial port access
+RUN usermod -aG dialout ${CONTAINER_USER}
+
 USER ${CONTAINER_USER}
 WORKDIR /home/${CONTAINER_USER}
 

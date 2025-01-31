@@ -43,6 +43,9 @@
     8000,
     3333
   ],
+  "runArgs": [
+    "--device=/dev/ttyACM0:/dev/ttyACM0"
+  ],
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/esp/superviper,type=bind,consistency=cached",
   "workspaceFolder": "/home/esp/superviper"
 }
