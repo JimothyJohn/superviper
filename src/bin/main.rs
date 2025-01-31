@@ -1,6 +1,9 @@
+// https://docs.esp-rs.org/book/writing-your-own-application/generate-project/esp-generate.html#understanding-mainrs
+// This tells the Rust compiler that this code doesn't use libstd
 #![no_std]
 #![no_main]
 
+// panic handler that runs if a panic occurs in code
 use esp_backtrace as _;
 use esp_hal::clock::CpuClock;
 use esp_hal::delay::Delay;
@@ -17,6 +20,7 @@ fn main() -> ! {
     let config = esp_hal::Config::default().with_cpu_clock(CpuClock::max());
     let peripherals = esp_hal::init(config);
 
+    // Initializes the logger, if ESP_LOG environment variable is defined, it will use that log level.
     esp_println::logger::init_logger_from_env();
 
     esp_alloc::heap_allocator!(72 * 1024);
