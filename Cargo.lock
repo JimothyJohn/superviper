@@ -42,6 +42,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8f68f53c83ab957f72c32642f3868eec03eb974d1fb82e453128456482613d36"
 
 [[package]]
+name = "blocking-network-stack"
+version = "0.1.0"
+source = "git+https://github.com/bjoernQ/blocking-network-stack.git?rev=b3ecefc222d8806edd221f266999ca339c52d34e#b3ecefc222d8806edd221f266999ca339c52d34e"
+dependencies = [
+ "embedded-io",
+ "heapless",
+ "log",
+ "smoltcp",
+]
+
+[[package]]
 name = "bytemuck"
 version = "1.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -329,8 +340,19 @@ version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3c83ca63fd02ca40644ae91ae63362e3a6e7f53458f6c1356decf892343d2418"
 dependencies = [
- "esp-build",
+ "esp-build 0.2.0",
  "esp-println",
+]
+
+[[package]]
+name = "esp-build"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b94a4b8d74e7cc7baabcca5b2277b41877e039ad9cd49959d48ef94dac7eab4b"
+dependencies = [
+ "quote",
+ "syn",
+ "termcolor",
 ]
 
 [[package]]
@@ -378,7 +400,7 @@ dependencies = [
  "embedded-io",
  "embedded-io-async",
  "enumset",
- "esp-build",
+ "esp-build 0.2.0",
  "esp-config",
  "esp-hal-procmacros",
  "esp-metadata",
@@ -435,7 +457,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "645e54eb592ca0a3d60213b1695e2a5fc0b51ca6d693c08d6983857224a629ed"
 dependencies = [
  "critical-section",
- "esp-build",
+ "esp-build 0.2.0",
  "log",
  "portable-atomic",
 ]
@@ -449,6 +471,17 @@ dependencies = [
  "document-features",
  "riscv",
  "riscv-rt-macros",
+]
+
+[[package]]
+name = "esp-storage"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "661aebceb62e0caadd7e6bddd88b2d891c3b08cea4eb5afe96ef697674ccda5c"
+dependencies = [
+ "critical-section",
+ "embedded-storage",
+ "esp-build 0.1.0",
 ]
 
 [[package]]
@@ -466,7 +499,7 @@ dependencies = [
  "embedded-io-async",
  "enumset",
  "esp-alloc",
- "esp-build",
+ "esp-build 0.2.0",
  "esp-config",
  "esp-hal",
  "esp-metadata",
@@ -896,6 +929,7 @@ dependencies = [
  "byteorder",
  "cfg-if",
  "heapless",
+ "log",
  "managed",
 ]
 
@@ -937,12 +971,14 @@ dependencies = [
 name = "superviper"
 version = "0.1.0"
 dependencies = [
- "critical-section",
+ "blocking-network-stack",
  "embedded-io",
+ "embedded-storage",
  "esp-alloc",
  "esp-backtrace",
  "esp-hal",
  "esp-println",
+ "esp-storage",
  "esp-wifi",
  "heapless",
  "log",
