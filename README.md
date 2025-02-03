@@ -1,8 +1,8 @@
 # superviper
 
-An experiment in deploying Rust on a RISC-V ESP32. If you can do it here you can do it anywhere!
+An experiment in deploying Rust on a RISC-V MCU. If you can do it here you can do it anywhere!
 
-## Goals
+## Goal
 
 Extract information from the environment as efficiently as possible.
 
@@ -17,18 +17,16 @@ Extract information from the environment as efficiently as possible.
 ### Resources
 
 1. [The Rust Programming Language](https://doc.rust-lang.org/book/)
-    - [Bookmark](https://doc.rust-lang.org/book/ch03-03-how-functions-work.html)
+    - [Bookmark](https://doc.rust-lang.org/book/ch03-05-control-flow.html)
 2. [The Embedded Rust Book](https://docs.rust-embedded.org/book/index.html)
     - [Bookmark](https://docs.rust-embedded.org/book/start/qemu.html)
 3. [The Rust on ESP Book](https://docs.esp-rs.org/book/)
-    - Completed
 4. [Embedded Rust (no_std) on Espressif](https://docs.esp-rs.org/no_std-training/)
     - [Bookmark](https://docs.esp-rs.org/no_std-training/03_6_http_client.html)
-    - [no_std Training](https://github.com/esp-rs/no_std-training)
 
 ### TODO
 
-- [ ] Create an GET HTTP request
-    - [Example](https://github.com/esp-rs/no_std-training/tree/main/intro/http-client)
-- [ ] Create an POST HTTP request
-- [ ] Identify a security/encryption method 
+- [x] Create an async GET HTTP request -> [Code](https://github.com/esp-rs/esp-hal/blob/main/examples/src/bin/wifi_embassy_dhcp.rs)
+- [ ] Create an async POST HTTP request
+- [ ] Create a SECURE POST HTTP request using TLS. [Reference](https://github.com/drogue-iot/embedded-tls)
+- [ ] Utilize flash/NVS encryption. [Reference](https://espressif.github.io/esp32-c3-book-en/chapter_13/13.3/13.3.7.html)

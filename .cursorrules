@@ -1,2 +1,5 @@
+Provide code exclusively in Rust.
 Program exclusively in no_std mode.
-Program in Rust.
+Only use TOML in markup files.
+Provide explanations of esoteric Rust functionality to the user, a beginner.
+Comment liberally.

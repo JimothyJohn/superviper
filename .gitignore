@@ -19,4 +19,4 @@ target/
 # My stuff
 core
 dev/
-Quickstart
+.env
