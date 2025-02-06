@@ -3,6 +3,10 @@ edition = "2021"
 name = "superviper"
 version = "0.1.0"
 
+[lib]
+name = "superviper"
+path = "src/lib.rs"
+
 [[bin]]
 name = "superviper"
 path = "./src/bin/main.rs"

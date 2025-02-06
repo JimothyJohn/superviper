@@ -35,6 +35,15 @@ use esp_wifi::{
     EspWifiController,
 }; // WiFi-specific functionality
 
+// Add this line to import the functions from network module
+use superviper::network::{connection, net_task};
+use superviper::system::setup_heap;
+
+// Issue a build/run command like SSID=my_ssid PASSWORD=my_password cargo run
+// OR set the environment variables in your shell before running cargo run
+const SSID: &str = env!("SSID");
+const PASSWORD: &str = env!("PASSWORD");
+
 // This macro creates static (global) variables safely at runtime
 // Static variables are necessary because the WiFi stack needs data that lives for the entire program
 macro_rules! mk_static {
@@ -46,11 +55,6 @@ macro_rules! mk_static {
     }};
 }
 
-// Issue a build/run command like SSID=my_ssid PASSWORD=my_password cargo run
-// OR set the environment variables in your shell before running cargo run
-const SSID: &str = env!("SSID");
-const PASSWORD: &str = env!("PASSWORD");
-
 #[esp_hal_embassy::main]
 async fn main(spawner: Spawner) -> ! {
     // Initialize logging system
@@ -60,8 +64,7 @@ async fn main(spawner: Spawner) -> ! {
     let config = esp_hal::Config::default().with_cpu_clock(CpuClock::max());
     let peripherals = esp_hal::init(config); // Initialize ESP32 hardware
 
-    // Allocate 72KB of heap memory for dynamic allocations
-    esp_alloc::heap_allocator!(72 * 1024);
+    setup_heap();
 
     // Initialize timer groups (required for various timing operations)
     let timg0 = TimerGroup::new(peripherals.TIMG0);
@@ -99,7 +102,7 @@ async fn main(spawner: Spawner) -> ! {
     );
 
     // Spawn background tasks for WiFi connection and network management
-    spawner.spawn(connection(controller)).ok();
+    spawner.spawn(connection(controller, SSID, PASSWORD)).ok();
     spawner.spawn(net_task(runner)).ok();
 
     // Buffer sizes for TCP communication
@@ -162,54 +165,4 @@ async fn main(spawner: Spawner) -> ! {
         }
         Timer::after(Duration::from_millis(3000)).await;
     }
-}
-
-#[embassy_executor::task]
-async fn connection(mut controller: WifiController<'static>) {
-    // This task manages the WiFi connection state
-    println!("start connection task");
-    println!("Device capabilities: {:?}", controller.capabilities());
-    loop {
-        match esp_wifi::wifi::wifi_state() {
-            // If we're connected, wait for disconnection event
-            WifiState::StaConnected => {
-                controller.wait_for_event(WifiEvent::StaDisconnected).await;
-                Timer::after(Duration::from_millis(5000)).await
-            }
-            _ => {}
-        }
-
-        // If WiFi is not started, configure and start it
-        if !matches!(controller.is_started(), Ok(true)) {
-            let client_config = Configuration::Client(ClientConfiguration {
-                ssid: SSID.try_into().unwrap(),
-                password: PASSWORD.try_into().unwrap(),
-                ..Default::default()
-            });
-            controller.set_configuration(&client_config).unwrap();
-            println!("Starting wifi");
-            controller.start_async().await.unwrap();
-            println!("Wifi started!");
-        }
-
-        // Attempt to connect to WiFi network
-        println!("About to connect...");
-        match controller.connect_async().await {
-            Ok(_) => println!("Wifi connected!"),
-            Err(e) => {
-                println!("Failed to connect to wifi: {e:?}");
-                Timer::after(Duration::from_millis(5000)).await
-            }
-        }
-    }
-}
-
-#[embassy_executor::task]
-async fn net_task(mut runner: Runner<'static, WifiDevice<'static, WifiStaDevice>>) {
-    // This task runs the network stack
-    // It handles all low-level network operations including:
-    // - DHCP client
-    // - TCP/IP stack
-    // - Network event processing
-    runner.run().await
 }
