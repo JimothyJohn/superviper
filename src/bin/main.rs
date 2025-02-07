@@ -18,7 +18,7 @@ use core::net::Ipv4Addr; // Provides IPv4 address structure in no_std environmen
 
 // Embassy is an async runtime and network stack for embedded systems
 use embassy_executor::Spawner; // Handles scheduling and running async tasks
-use embassy_net::{tcp::TcpSocket, Runner, StackResources}; // Networking components
+use embassy_net::{tcp::TcpSocket, StackResources}; // Networking components
 use embassy_time::{Duration, Timer}; // Time management utilities
 
 // ESP32-specific dependencies
@@ -26,14 +26,7 @@ use esp_alloc as _; // Heap allocation support (required for dynamic memory)
 use esp_backtrace as _; // Provides better error traces
 use esp_hal::{clock::CpuClock, rng::Rng, timer::timg::TimerGroup}; // Hardware abstraction layer
 use esp_println::println; // println! macro that works on ESP32
-use esp_wifi::{
-    init,
-    wifi::{
-        ClientConfiguration, Configuration, WifiController, WifiDevice, WifiEvent, WifiStaDevice,
-        WifiState,
-    },
-    EspWifiController,
-}; // WiFi-specific functionality
+use esp_wifi::{init, wifi::WifiStaDevice, EspWifiController}; // WiFi-specific functionality
 
 // Add this line to import the functions from network module
 use superviper::network::{connection, net_task};
@@ -75,13 +68,13 @@ async fn main(spawner: Spawner) -> ! {
     // Initialize WiFi controller with required peripherals
     let init = &*mk_static!(
         EspWifiController<'static>,
-        init(timg0.timer0, rng.clone(), peripherals.RADIO_CLK).unwrap()
+        init(timg0.timer0, rng, peripherals.RADIO_CLK).unwrap()
     );
 
     // Create WiFi interface in Station (client) mode
     let wifi = peripherals.WIFI;
     let (wifi_interface, controller) =
-        esp_wifi::wifi::new_with_mode(&init, wifi, WifiStaDevice).unwrap();
+        esp_wifi::wifi::new_with_mode(init, wifi, WifiStaDevice).unwrap();
 
     // Initialize embassy time driver
     let timg1 = TimerGroup::new(peripherals.TIMG1);
